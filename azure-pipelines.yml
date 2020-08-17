@@ -22,7 +22,7 @@ steps:
 - task: ArchiveFiles@2
   displayName: 'Archive files'
   inputs:
-    rootFolderOrFile: $(pipeline.workspace)\wb
+    rootFolderOrFile: $(pipeline.workspace)/wb
     includeRootFolder: false
     archiveType: zip
     archiveFile: $(agent.buildDirectory)/$(Build.BuildId).zip

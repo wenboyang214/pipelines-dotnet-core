@@ -20,8 +20,8 @@ steps:
   displayName: 'dotnet publish'
 
 - task: ArchiveFiles@2
-    displayName: 'Archive files'
-    inputs:
+  displayName: 'Archive files'
+  inputs:
     rootFolderOrFile: $(Build.ArtifactStagingDirectory)
     includeRootFolder: false
     archiveType: zip

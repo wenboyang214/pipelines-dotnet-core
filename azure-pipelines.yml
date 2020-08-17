@@ -16,7 +16,7 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-- script: dotnet publish --configuration Release --output $(Pipeline.Workspace)
+- script: dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)
   displayName: 'dotnet publish'
 # publish an artifact called drop
 - task: PublishBuildArtifacts@1
@@ -35,4 +35,4 @@ steps:
   inputs:
     azureSubscription: cloudtestsubscription
     appName: wbaspdotnet
-    package: $(Build.ArtifactStagingDirectory)/*.zip
+    package: $(System.artifactsDirectory)/*.zip

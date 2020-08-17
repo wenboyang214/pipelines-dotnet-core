@@ -11,18 +11,23 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  system.debyg: true
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+- script: dotnet publish --configuration Release --output $(Pipeline.Workspace)
+  displayName: 'dotnet publish'
 # publish an artifact called drop
 - task: PublishBuildArtifacts@1
   inputs:
+    pathtoPublish: $(Build.ArtifactStagingDirectory)
     artifactName: drop
 
 # download the artifact drop from the previous job
 - task: DownloadBuildArtifacts@0
   inputs:
+    downloadPath: $(System.artifactsDirectory)
     artifactName: drop
 
 # deploy to Azure Web App production
@@ -30,3 +35,4 @@ steps:
   inputs:
     azureSubscription: cloudtestsubscription
     appName: wbaspdotnet
+    package: $(Build.ArtifactStagingDirectory)/*.zip

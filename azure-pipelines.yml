@@ -35,15 +35,15 @@ steps:
     artifactName: drop
 
 # download the artifact drop from the previous job
-#- task: DownloadBuildArtifacts@0
-#  inputs:
-#    downloadPath: $(pipeline.workspace)
-#    artifactName: drop
+- task: DownloadBuildArtifacts@0
+  inputs:
+    downloadPath: $(pipeline.workspace)
+    artifactName: drop
 
 # deploy to Azure Web App production
 - task: AzureWebApp@1
   inputs:
     azureSubscription: cloudtestsubscription
     appName: wbaspdotnet
-#    package: $(pipeline.workspace)/drop/*.zip
-    package: $(agent.buildDirectory)/$(Build.BuildId).zip
+    package: $(pipeline.workspace)/drop/*.zip
+#    package: $(agent.buildDirectory)/$(Build.BuildId).zip

@@ -15,3 +15,18 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+# publish an artifact called drop
+- task: PublishBuildArtifacts@1
+  inputs:
+    artifactName: drop
+
+# download the artifact drop from the previous job
+- task: DownloadBuildArtifacts@0
+  inputs:
+    artifactName: drop
+
+# deploy to Azure Web App production
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: cloudtestsubscription
+    appName: wbaspdotnet

@@ -16,28 +16,28 @@ variables:
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-- script: dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)
+- script: dotnet publish --configuration Release --output $(pipeline.workspace)\wb
   displayName: 'dotnet publish'
 
 - task: ArchiveFiles@2
   displayName: 'Archive files'
   inputs:
-    rootFolderOrFile: $(Build.ArtifactStagingDirectory)
+    rootFolderOrFile: $(pipeline.workspace)\wb
     includeRootFolder: false
     archiveType: zip
-    archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    archiveFile: $(agent.buildDirectory)/$(Build.BuildId).zip
     replaceExistingArchive: true
 
 # publish an artifact called drop
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+    pathtoPublish: $(agent.buildDirectory)/$(Build.BuildId).zip
     artifactName: drop
 
 # download the artifact drop from the previous job
 - task: DownloadBuildArtifacts@0
   inputs:
-    downloadPath: $(System.artifactsDirectory)
+    downloadPath: $(pipeline.workspace)
     artifactName: drop
 
 # deploy to Azure Web App production
@@ -45,4 +45,4 @@ steps:
   inputs:
     azureSubscription: cloudtestsubscription
     appName: wbaspdotnet
-    package: $(System.artifactsDirectory)/drop/*.zip
+    package: $(pipeline.workspace)/drop/*.zip

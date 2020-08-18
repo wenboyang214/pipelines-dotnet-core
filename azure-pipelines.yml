@@ -60,9 +60,34 @@ stages:
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - deployment: Deploy
+  - deployment: eastus product
     environment: 'development'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          # deploy to Azure Web App production
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: cloudtestsubscription
+              appName: wbaspdotnet
+              package: $(pipeline.workspace)/drop/*.zip
 
+  - deployment: centralus product
+    environment: 'development'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          # deploy to Azure Web App production
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: cloudtestsubscription
+              appName: wbaspdotnet
+              package: $(pipeline.workspace)/drop/*.zip
+
+  - deployment: westeurope product
+    environment: 'development'
     strategy:
       runOnce:
         deploy:

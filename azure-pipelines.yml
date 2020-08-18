@@ -13,37 +13,53 @@ variables:
   buildConfiguration: 'Release'
   system.debyg: true
 
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
-- script: dotnet publish --configuration Release --output $(pipeline.workspace)/wb
-  displayName: 'dotnet publish'
 
-- task: ArchiveFiles@2
-  displayName: 'Archive files'
-  inputs:
-    rootFolderOrFile: $(pipeline.workspace)/wb
-    includeRootFolder: false
-    archiveType: zip
-    archiveFile: $(agent.buildDirectory)/$(Build.BuildId).zip
-    replaceExistingArchive: true
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: buildjob
+    steps:
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: 'dotnet build $(buildConfiguration)'
+    - script: dotnet publish --configuration Release --output $(pipeline.workspace)/wb
+      displayName: 'dotnet publish'
 
-# publish an artifact called drop
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: $(agent.buildDirectory)/$(Build.BuildId).zip
-    artifactName: drop
+    - task: ArchiveFiles@2
+      displayName: 'Archive files'
+      inputs:
+        rootFolderOrFile: $(pipeline.workspace)/wb
+        includeRootFolder: false
+        archiveType: zip
+        archiveFile: $(agent.buildDirectory)/$(Build.BuildId).zip
+        replaceExistingArchive: true
+
+    # publish an artifact called drop
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: $(agent.buildDirectory)/$(Build.BuildId).zip
+        artifactName: drop
 
 # download the artifact drop from the previous job
-- task: DownloadBuildArtifacts@0
-  inputs:
-    downloadPath: $(pipeline.workspace)
-    artifactName: drop
+#- task: DownloadBuildArtifacts@0
+#  inputs:
+#    downloadPath: $(pipeline.workspace)
+#    artifactName: drop
 
-# deploy to Azure Web App production
-- task: AzureWebApp@1
-  inputs:
-    azureSubscription: cloudtestsubscription
-    appName: wbaspdotnet
-    package: $(pipeline.workspace)/drop/*.zip
-#    package: $(agent.buildDirectory)/$(Build.BuildId).zip
+- stage: Deploy
+  displayName: Deploy stage
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+  - deployment: Deploy
+    environment: 'development'
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          # deploy to Azure Web App production
+          - task: AzureWebApp@1
+              inputs:
+              azureSubscription: cloudtestsubscription
+              appName: wbaspdotnet
+              package: $(pipeline.workspace)/drop/*.zip

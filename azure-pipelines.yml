@@ -13,7 +13,7 @@ variables:
   buildConfiguration: 'Release'
   system.debyg: true
 
-
+stages:
 - stage: Build
   displayName: Build stage
   jobs:

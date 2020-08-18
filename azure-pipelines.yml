@@ -16,6 +16,8 @@ variables:
 stages:
 - stage: Build
   displayName: Build stage
+  pool:
+    vmImage: 'ubuntu-latest'
   jobs:
   - job: buildjob
     steps:
@@ -49,6 +51,8 @@ stages:
   displayName: Deploy stage
   dependsOn: Build
   condition: succeeded()
+  pool:
+    vmImage: 'windows-latest'
   jobs:
   - deployment: Deploy
     environment: 'development'

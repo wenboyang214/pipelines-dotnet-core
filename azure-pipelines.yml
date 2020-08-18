@@ -60,7 +60,7 @@ stages:
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - deployment: eastus product
+  - deployment: eastus_product
     environment: 'development'
     strategy:
       runOnce:
@@ -73,7 +73,7 @@ stages:
               appName: wbaspdotnet
               package: $(pipeline.workspace)/drop/*.zip
 
-  - deployment: centralus product
+  - deployment: centralus_product
     environment: 'development'
     strategy:
       runOnce:
@@ -86,7 +86,7 @@ stages:
               appName: wbaspdotnet
               package: $(pipeline.workspace)/drop/*.zip
 
-  - deployment: westeurope product
+  - deployment: westeurope_product
     environment: 'development'
     strategy:
       runOnce:

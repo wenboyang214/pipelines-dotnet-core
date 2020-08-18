@@ -60,6 +60,6 @@ stages:
           # deploy to Azure Web App production
           - task: AzureWebApp@1
             inputs:
-            azureSubscription: cloudtestsubscription
-            appName: wbaspdotnet
-            package: $(pipeline.workspace)/drop/*.zip
+              azureSubscription: cloudtestsubscription
+              appName: wbaspdotnet
+              package: $(pipeline.workspace)/drop/*.zip
